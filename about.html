@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0c0c0d">
+    <title>About | PhotoSpace</title>
+    <link rel="stylesheet" href="css/main-css.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/about.css">
+</head>
+<body class="about-page">
+    <header class="navbar">
+        <a class="logo about-logo" href="main.html">PhotoSpace</a>
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="main.html">Home</a>
+        </nav>
+        <div class="nav-actions">
+            <details class="more-menu">
+                <summary aria-label="More options">More <span aria-hidden="true">⌄</span></summary>
+                <div class="more-menu-dropdown">
+                    <a href="about.html" aria-current="page">About PhotoSpace</a>
+                </div>
+            </details>
+            <a class="about-avatar-link" href="main.html" aria-label="Return to your gallery">
+                <img src="pictures/default-profile.svg" alt="Your profile" class="about-avatar">
+            </a>
+        </div>
+    </header>
+
+    <main class="about-wrap">
+        <section class="about-hero">
+            <p class="eyebrow">A LITTLE ABOUT THIS SPACE</p>
+            <h1>Every photograph<br><span>keeps a piece of time.</span></h1>
+            <p class="hero-copy">PhotoSpace is my personal corner of the internet: a place to collect photographs, remember the stories behind them, and return to the moments I don't want to lose.</p>
+            <a class="about-primary-link" href="main.html">Explore my gallery <span aria-hidden="true">↗</span></a>
+            <div class="hero-index" aria-hidden="true"><span>PS</span><span>01 / PERSONAL ARCHIVE</span></div>
+        </section>
+
+        <section class="about-story" aria-labelledby="story-heading">
+            <div class="section-kicker">01 / THE IDEA</div>
+            <div class="story-content">
+                <h2 id="story-heading">Why I made PhotoSpace</h2>
+                <p>Photographs are more than images. They hold places we've been, people we've met, and little details that time has a habit of quietly taking away.</p>
+                <p>I wanted one calm, personal place to keep my photographs organised, add context to them, and make it easy to revisit them later. No feed to keep up with, no numbers to chase. Just my photos, their stories, and the freedom to keep adding to the collection.</p>
+            </div>
+        </section>
+
+        <section class="about-maker" aria-labelledby="maker-heading">
+            <div class="maker-mark" aria-hidden="true">H<span>.</span></div>
+            <div class="maker-copy">
+                <div class="section-kicker">02 / THE PERSON BEHIND IT</div>
+                <h2 id="maker-heading">Hi, I'm <span>Himanshu Sharma.</span></h2>
+                <p>I'm a student, a curious observer, and someone who enjoys learning by making things. PhotoSpace brings together two interests of mine: photography and building things on the web.</p>
+                <p>This project is a work in progress, made for personal use and improved one small detail at a time. The idea is simple: make a home for the photographs I take and the memories I want to keep close.</p>
+                <a class="text-link" href="main.html">Back to the photographs <span aria-hidden="true">→</span></a>
+            </div>
+        </section>
+
+        <section class="about-principles" aria-label="What PhotoSpace is about">
+            <article><span>01</span><h3>Keep it personal</h3><p>A private-feeling space focused on your own collection, not a social feed.</p></article>
+            <article><span>02</span><h3>Keep the story</h3><p>Save the name, source, and notes that make each photograph meaningful.</p></article>
+            <article><span>03</span><h3>Keep discovering</h3><p>Let the archive grow naturally as new photographs and memories arrive.</p></article>
+        </section>
+
+        <footer class="about-footer">
+            <a href="main.html">PhotoSpace</a>
+            <p>Made with curiosity, for the moments worth keeping.</p>
+            <span>© <span id="year"></span> Himanshu Sharma</span>
+        </footer>
+    </main>
+    <script>document.querySelector('#year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,515 @@
+/* PhotoSpace components: photo viewer, notes, and custom dialog */
+
+/* =========================
+   FULL PHOTO VIEWER
+========================= */
+
+.photo-view-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4vh 4vw;
+
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+}
+
+.photo-view-modal.hidden {
+    display: none;
+}
+
+.photo-viewer-window {
+    width: 100%;
+    max-width: 1200px;
+    height: 82vh;
+    max-height: 850px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+
+    overflow: hidden;
+    position: relative;
+
+    background: #111113;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+
+    animation: viewerEnter 0.22s ease;
+}
+
+/* Image area */
+
+.photo-viewer-image-area {
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: #080809;
+}
+
+#viewer-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+/* Sidebar */
+
+.photo-sidebar {
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px 22px 22px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+
+    overflow-y: auto;
+}
+
+.viewer-close-btn {
+    align-self: flex-end;
+
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #252528;
+    color: white;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.viewer-close-btn:hover {
+    background: #3a3a3e;
+}
+
+.photo-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.photo-details h2 {
+    overflow-wrap: anywhere;
+    font-size: 21px;
+}
+
+.photo-details p {
+    color: #9b9b9f;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.photo-details span {
+    color: #f5f5f5;
+}
+
+/* Notes */
+
+.notes-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    gap: 16px;
+    padding-top: 24px;
+}
+
+.notes-section h3 {
+    font-size: 17px;
+}
+
+.photo-notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.photo-note {
+    padding: 12px;
+
+    border-radius: 8px;
+    background: #1b1b1e;
+
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.photo-note p {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.photo-note time {
+    display: block;
+    margin-top: 8px;
+
+    color: #858589;
+    font-size: 11px;
+}
+
+.no-notes {
+    color: #858589;
+    font-size: 13px;
+}
+
+/* Add-note form */
+
+#add-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+#photo-note-input {
+    width: 100%;
+    resize: vertical;
+
+    padding: 12px;
+
+    border: 1px solid #303034;
+    border-radius: 8px;
+
+    background: #18181a;
+    color: white;
+    font: inherit;
+    font-size: 13px;
+}
+
+#photo-note-input:focus {
+    outline: 1px solid #777;
+}
+
+#add-note-form button {
+    padding: 11px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: white;
+    color: #111;
+
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#add-note-form button:hover {
+    background: #ddd;
+}
+
+@keyframes viewerEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Mobile layout */
+
+@media (max-width: 700px) {
+    .photo-view-modal {
+        padding: 12px;
+    }
+
+    .photo-viewer-window {
+        height: 92vh;
+        max-height: none;
+
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(180px, 45%) minmax(0, 1fr);
+    }
+
+    .photo-viewer-image-area {
+        padding: 12px;
+    }
+
+    .photo-sidebar {
+        padding: 12px 18px 18px;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .photo-details {
+        gap: 7px;
+        padding-bottom: 16px;
+    }
+
+    .photo-details h2 {
+        font-size: 18px;
+    }
+
+    .notes-section {
+        padding-top: 16px;
+    }
+}
+
+/* Delete photo button */
+
+.delete-photo-btn {
+    align-self: flex-start;
+    margin-top: 8px;
+    padding: 9px 13px;
+
+    border: 1px solid #ff0019bc;
+    border-radius: 7px;
+
+    background: transparent;
+    color: #ff0011d5;
+
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.delete-photo-btn:hover {
+    background: #321719;
+}
+
+
+.note-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.note-actions button {
+    padding: 5px 10px;
+
+    border: 1px solid #38383c;
+    border-radius: 5px;
+
+    background: transparent;
+    color: #d4d4d7;
+
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.note-actions button:hover {
+    background: #303034;
+}
+
+.note-actions button[data-action="delete"] {
+    color: #e49a9f;
+    border-color: #61363a;
+}
+
+.note-actions button[data-action="delete"]:hover {
+    background: #321719;
+}
+
+/* =========================
+   CUSTOM APP DIALOG
+========================= */
+
+.app-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(10px);
+
+    animation: dialogFadeIn 0.2s ease;
+}
+
+.app-dialog.hidden {
+    display: none !important;
+}
+
+.app-dialog-card {
+    width: min(420px, 100%);
+    padding: 30px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(145deg, #202023, #111113);
+
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+
+    animation: dialogRise 0.25s ease;
+}
+
+.dialog-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #38383c;
+    border-radius: 12px;
+
+    background: #29292d;
+    color: #f5f5f5;
+
+    font-size: 23px;
+}
+
+.app-dialog-card.dialog-danger .dialog-icon {
+    color: #ff9a9f;
+    background: #321719;
+    border-color: #61363a;
+}
+
+.app-dialog-card h2 {
+    margin-bottom: 10px;
+
+    color: #f5f5f5;
+    font-family: Georgia, serif;
+    font-size: 25px;
+    font-weight: 400;
+}
+
+.app-dialog-card > p {
+    margin-bottom: 22px;
+
+    color: #a5a5aa;
+    font-size: 14px;
+    line-height: 1.7;
+
+    white-space: pre-line;
+}
+
+.dialog-input {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 20px;
+    padding: 12px;
+
+    resize: vertical;
+
+    border: 1px solid #38383c;
+    border-radius: 9px;
+
+    background: #141416;
+    color: #f5f5f5;
+
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dialog-input:focus {
+    outline: none;
+    border-color: #88888f;
+    background: #19191c;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.dialog-btn {
+    padding: 10px 16px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.dialog-btn:hover {
+    transform: translateY(-1px);
+}
+
+.dialog-cancel {
+    border-color: #38383c;
+    background: transparent;
+    color: #d0d0d4;
+}
+
+.dialog-cancel:hover {
+    background: #29292d;
+}
+
+.dialog-confirm {
+    background: #f5f5f5;
+    color: #111113;
+}
+
+.dialog-confirm:hover {
+    background: #dcdce0;
+}
+
+.app-dialog-card.dialog-danger .dialog-confirm {
+    background: #d85d65;
+    color: white;
+}
+
+.app-dialog-card.dialog-danger .dialog-confirm:hover {
+    background: #bd454e;
+}
+
+@keyframes dialogFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes dialogRise {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+
