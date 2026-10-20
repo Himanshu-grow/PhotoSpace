@@ -37,7 +37,7 @@ saveButton.addEventListener("click", async () => {
     if (values.bio.length > 150) { window.alert("Your bio must be 150 characters or fewer."); return; }
     profile = { ...profile, ...values, privateAccount: privateAccountInput.checked };
     saveButton.disabled = true;
-    try { await saveProfile(profile); window.location.href = "main.html"; }
+    try { await saveProfile(profile); window.location.href = "index.html"; }
     catch (error) { console.error("Could not save profile:", error); window.alert("Your profile could not be saved. Please check available browser storage and try again."); }
     finally { saveButton.disabled = false; }
 });
