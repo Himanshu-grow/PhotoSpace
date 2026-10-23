@@ -40,4 +40,9 @@ export function renderPhotos() {
 
         photoGrid.appendChild(image);
     });
+    const postCount = document.querySelector("#post-count");
+
+    if (postCount) {
+        postCount.textContent = photos.length;
+    }
 }
