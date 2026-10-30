@@ -144,6 +144,11 @@ body {
     border-bottom: 1px solid #242426;
 }
 
+.privacy-option-public { margin-top: 28px; padding: 18px; border: 1px solid #242426; border-radius: 10px; }
+.privacy-option-public h3 { margin-bottom: 4px; font-size: 15px; }
+.privacy-option-public p { color: #858589; font-size: 13px; }
+.account-danger { margin-top: 48px; }
+
 
 /* Profile image */
 

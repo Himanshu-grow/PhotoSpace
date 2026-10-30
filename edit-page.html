@@ -36,9 +36,17 @@
                         <div class="form-group"><label for="name">Display name</label><input id="name" type="text" maxlength="60" required></div>
                     </div>
                     <div class="form-group bio-group"><label for="bio">Bio</label><textarea id="bio" rows="5" maxlength="150" placeholder="Tell the community a little about yourself"></textarea><span class="character-count">0 / 150</span></div>
+                    <div class="privacy-option privacy-option-public">
+                        <div><h3>Private profile</h3><p>Only you can see this profile and its photos. Turn this off to appear in Explore.</p></div>
+                        <label class="toggle"><input id="is-private" type="checkbox"><span class="slider"></span></label>
+                    </div>
                 </section>
                 <p id="profile-save-message" class="auth-message" role="status"></p>
             </form>
+            <section class="danger-section account-danger">
+                <div><h2>Delete account</h2><p>Permanently remove your profile, photos, comments, and likes.</p></div>
+                <button id="delete-account-btn" type="button" class="delete-btn">Delete account</button>
+            </section>
         </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -1,6 +1,7 @@
 
 import { photos } from "../data/photos.js";
 import { savePhoto } from "./photoDB.js";
+import { optimizeImage } from "./imageOptimize.js";
 import { showAppDialog } from "../components/appDialog.js";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -48,7 +49,7 @@ export function initPhotoUpload(onPhotoAdded) {
 
         if (!file) return;
 
-        if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
             selectedFile = null;
             photoInput.value = "";
 
@@ -61,7 +62,7 @@ export function initPhotoUpload(onPhotoAdded) {
 
             await showAppDialog({
                 title: "Invalid file",
-                message: "Please select a valid image file.",
+                message: "Please choose a JPEG, PNG, or WebP image.",
                 mode: "alert"
             });
 
@@ -141,6 +142,8 @@ export function initPhotoUpload(onPhotoAdded) {
         uploadButton.disabled = true;
 
         try {
+            photo.image = await optimizeImage(selectedFile, 2560, 0.84);
+            photo.thumbnail = await optimizeImage(selectedFile, 480, 0.72);
             const savedPhoto = await savePhoto(photo);
             photos.unshift(savedPhoto);
             onPhotoAdded();

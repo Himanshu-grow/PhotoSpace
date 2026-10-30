@@ -36,12 +36,15 @@ export function renderPhotos() {
             galleryObjectURLs.push(imageURL);
             image.src = imageURL;
         } else {
-            image.src = photo.url;
+            image.src = photo.thumbnailUrl || photo.url;
         }
 
         image.alt = photo.name;
         image.title = `${photo.name} — ${photo.date}`;
         image.dataset.photoId = photo.id;
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.fetchPriority = "low";
 
         photoGrid.appendChild(image);
     });

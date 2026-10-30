@@ -6,7 +6,8 @@ if (actions) {
         ? await supabase.auth.getUser()
         : { data: { user: null } };
     if (user) {
-        actions.innerHTML = `<a class="auth-nav-link" href="profile.html?id=${encodeURIComponent(user.id)}">My profile</a><button type="button" class="auth-nav-button" id="sign-out-button">Sign out</button>`;
+        const { data: isModerator } = await supabase.rpc("is_moderator");
+        actions.innerHTML = `<a class="auth-nav-link" href="profile.html?id=${encodeURIComponent(user.id)}">My profile</a>${isModerator ? '<a class="auth-nav-link" href="moderation.html">Moderation</a>' : ""}<button type="button" class="auth-nav-button" id="sign-out-button">Sign out</button>`;
         document.querySelector("#sign-out-button").addEventListener("click", async () => {
             await supabase.auth.signOut();
             window.location.href = "index.html";

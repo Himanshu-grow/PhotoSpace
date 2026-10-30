@@ -1,0 +1,9 @@
+.moderation-wrap { width: min(900px,92%); margin: 0 auto; padding: 60px 0 100px; }
+.moderation-wrap h1 { margin: 10px 0; font: 400 42px Georgia,serif; }
+.moderation-intro { color: var(--text-muted); margin-bottom: 28px; }
+.moderation-list { display: grid; gap: 14px; }
+.moderation-card { padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.moderation-card h2 { margin-bottom: 8px; font-size: 18px; }
+.moderation-card p { margin: 8px 0; color: var(--text-muted); font-size: 13px; overflow-wrap: anywhere; }
+.moderation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }
+.moderation-actions button,.moderation-actions a { padding: 8px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-light); color: var(--text); text-decoration: none; font: inherit; font-size: 12px; cursor: pointer; }

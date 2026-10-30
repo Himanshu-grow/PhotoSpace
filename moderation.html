@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderation | PhotoSpace</title>
+    <link rel="stylesheet" href="css/main-css.css"><link rel="stylesheet" href="css/explore.css"><link rel="stylesheet" href="css/moderation.css">
+</head><body>
+    <header class="navbar"><a href="index.html" class="logo"><img src="pictures/full-logo.png" alt="PhotoSpace"></a><nav class="nav-links"><a href="index.html">Explore</a></nav><div class="nav-actions" id="nav-actions"></div></header>
+    <main class="moderation-wrap"><p class="explore-kicker">TRUST & SAFETY</p><h1>Open reports</h1><p class="moderation-intro">Review reports and hide content that violates the community rules.</p>
+        <div id="moderation-list" class="moderation-list" aria-live="polite">Loading reports…</div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module" src="scripts/moderation.js"></script>
+</body></html>

@@ -1,5 +1,6 @@
 import { supabase } from "./supabaseClient.js";
 import { getProfile, saveProfile, uploadProfileImage } from "./profile.js";
+import { deleteMyAccount } from "./account.js";
 
 const form = document.querySelector("#profile-form");
 const message = document.querySelector("#profile-save-message");
@@ -16,6 +17,7 @@ async function loadProfile() {
     document.querySelector("#username").value = profile.username;
     document.querySelector("#name").value = profile.name;
     bio.value = profile.bio || "";
+    document.querySelector("#is-private").checked = Boolean(profile.is_private);
     image.src = profile.profileImage;
     updateCount();
 }
@@ -40,7 +42,7 @@ imageInput.addEventListener("change", async () => {
     }
     try {
         profile.profile_image_path = await uploadProfileImage(file);
-        profile.profileImage = supabase.storage.from("photos").getPublicUrl(profile.profile_image_path).data.publicUrl;
+        profile.profileImage = (await supabase.storage.from("photos").createSignedUrl(profile.profile_image_path, 3600)).data.signedUrl;
         image.src = profile.profileImage;
         message.textContent = "Picture uploaded. Save changes to publish it on your profile.";
     } catch (error) { message.textContent = error.message; }
@@ -59,10 +61,23 @@ form.addEventListener("submit", async event => {
     button.disabled = true;
     message.textContent = "Saving…";
     try {
-        profile = await saveProfile({ ...profile, username, name, bio: bio.value });
+        profile = await saveProfile({ ...profile, username, name, bio: bio.value, is_private: document.querySelector("#is-private").checked });
         location.href = `profile.html?id=${encodeURIComponent(profile.user_id)}`;
     } catch (error) {
         message.textContent = error.code === "23505" ? "That username is already taken." : error.message;
+        button.disabled = false;
+    }
+});
+
+document.querySelector("#delete-account-btn").addEventListener("click", async () => {
+    if (!window.confirm("Permanently delete your account, profile, photos, comments, and likes? This cannot be undone.")) return;
+    const button = document.querySelector("#delete-account-btn");
+    button.disabled = true;
+    try {
+        await deleteMyAccount();
+        location.href = "index.html";
+    } catch (error) {
+        message.textContent = error.message || "Account deletion failed. Please try again.";
         button.disabled = false;
     }
 });

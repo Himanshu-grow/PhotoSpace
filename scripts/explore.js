@@ -53,8 +53,11 @@ function renderRecentPhotos(photos, profiles) {
         card.className = "recent-photo-card";
         card.href = `profile.html?id=${encodeURIComponent(owner.user_id)}`;
         const image = document.createElement("img");
-        image.src = photo.url;
+        image.src = photo.thumbnailUrl || photo.url;
         image.alt = photo.name;
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.fetchPriority = "low";
         const details = document.createElement("div");
         details.className = "recent-photo-copy";
         const name = document.createElement("strong");
@@ -81,9 +84,17 @@ if (!isSupabaseConfigured) {
         const [profiles, photos] = await Promise.all([getProfiles(), getAllPhotos(null, 24)]);
         renderProfiles(profiles);
         renderRecentPhotos(photos, profiles);
-        searchInput.addEventListener("input", async () => {
-            try { renderProfiles(await getProfiles(searchInput.value)); }
-            catch (error) { console.error("Could not search profiles:", error); }
+        let searchTimer;
+        let searchRequest = 0;
+        searchInput.addEventListener("input", () => {
+            clearTimeout(searchTimer);
+            const requestId = ++searchRequest;
+            searchTimer = setTimeout(async () => {
+                try {
+                    const results = await getProfiles(searchInput.value);
+                    if (requestId === searchRequest) renderProfiles(results);
+                } catch (error) { console.error("Could not search profiles:", error); }
+            }, 250);
         });
     } catch (error) {
         console.error("Could not load the community:", error);
