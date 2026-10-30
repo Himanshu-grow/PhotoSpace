@@ -49,7 +49,6 @@ export async function saveProfile(profile) {
     if (authError || !authData.user) throw new Error("Sign in to edit your profile.");
     const previousImagePath = profile.profile_image_path;
     const values = {
-        user_id: authData.user.id,
         username: profile.username.trim().toLowerCase(),
         name: profile.name.trim(),
         bio: profile.bio.trim(),
@@ -57,7 +56,10 @@ export async function saveProfile(profile) {
         is_private: Boolean(profile.is_private),
         updated_at: new Date().toISOString()
     };
-    const { data, error } = await supabase.from("profiles").upsert(values)
+    // Profiles are created by the auth signup trigger. Updating the existing
+    // row avoids requiring INSERT grants just to edit a profile.
+    const { data, error } = await supabase.from("profiles").update(values)
+        .eq("user_id", authData.user.id)
         .select("user_id, username, name, bio, profile_image_path, is_private, created_at").single();
     if (error) throw error;
     if (previousImagePath && previousImagePath !== data.profile_image_path) {
