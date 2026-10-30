@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile | PhotoSpace</title>
+    <link rel="icon" type="image/png" href="pictures/camera-logo-edited.png">
+
+    <link rel="stylesheet" href="css/main-css.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/explore.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+    <a href="index.html" class="logo">
+        <img src="pictures/full-logo.png" alt="PhotoSpace">
+    </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="index.html">Explore</a>
+        </nav>
+
+        <div class="nav-actions" id="nav-actions"></div>
+    </header>
+
+
+    <main class="profile-container">
+
+        <!-- Profile section -->
+        <section class="profile">
+
+            <div class="profile-picture-container">
+                <img
+                    id="profile-picture"
+                    src="pictures/default-profile.svg"
+                    alt="Profile picture"
+                >
+
+                <button id="change-profile-btn">
+                    Change
+                </button>
+            </div>
+
+            <!-- Hidden file input -->
+            <input
+                type="file"
+                id="profile-image-input"
+                accept="image/*"
+                hidden
+            >
+
+            <div class="profile-info">
+
+                <div class="profile-name-row">
+                    <h1 id="username">Your Name</h1>
+                    <button id="edit-name-btn" class="edit-name-btn" type="button" aria-label="Edit profile name" title="Edit name">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+                    </button>
+                </div>
+
+                <p id="profile-bio" class="bio">
+                    Photography • Travel • Life
+                </p>
+                <p id="profile-username" class="bio"></p>
+
+                <div class="stats">
+                    <div>
+                        <strong id="post-count">0</strong>
+                        <span>Photos</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Profile actions -->
+        <section class="profile-actions">
+
+            <button id="edit-profile-btn">
+                Edit Profile
+            </button>
+
+            <button id="add-photo-btn">
+                + Add Photo
+            </button>
+
+        </section>
+
+
+        <!-- Navigation tabs -->
+        <section class="tabs">
+
+            <button class="tab active" data-tab="posts">
+                Posts
+            </button>
+
+        </section>
+
+
+        <!-- Photo grid -->
+        <section id="photo-grid" class="photo-grid">
+
+            <!--
+                Photos will eventually be created dynamically
+                using JavaScript.
+            -->
+
+            <div class="empty-message">
+                No photos yet.
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Full Photo Viewer -->
+    <div id="photo-viewer" class="photo-view-modal hidden">
+
+        <div class="photo-viewer-window">
+
+            <!-- Large image area -->
+            <div class="photo-viewer-image-area">
+                <img id="viewer-image" src="" alt="Full photo view">
+            </div>
+
+            <!-- Details sidebar -->
+            <aside class="photo-sidebar">
+
+                <button id="close-viewer-btn"
+                        class="viewer-close-btn"
+                        aria-label="Close photo viewer">
+                    ×
+                </button>
+
+                <div class="photo-details">
+                    <h2 id="viewer-photo-name"></h2>
+
+                    <p>
+                        Source:
+                        <span id="viewer-photo-source"></span>
+                    </p>
+
+                    <p>
+                        Uploaded:
+                        <span id="viewer-photo-date"></span>
+                    </p>
+                </div>
+
+
+                <button id="delete-photo-btn" class="delete-photo-btn" type="button" hidden title="Delete this photo">
+                    Remove Photo
+                </button>
+
+
+                <div class="notes-section">
+                    <h3>Notes</h3>
+
+                    <div id="photo-notes-list"
+                        class="photo-notes-list">
+                    </div>
+
+                    <form id="add-note-form">
+                        <textarea
+                            id="photo-note-input"
+                            placeholder="Write a note about this photo..."
+                            rows="3"
+                            required
+                        ></textarea>
+
+                        <button type="submit">
+                            Add Note
+                        </button>
+                    </form>
+                </div>
+
+            </aside>
+
+        </div>
+    </div>
+
+
+    <!-- Add photo modal -->
+    <div id="photo-modal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <button id="close-modal-btn" class="close-btn">
+                ×
+            </button>
+
+            <h2>Add a photo</h2>
+
+            <input
+                type="file"
+                id="photo-input"
+                accept="image/*"
+            >
+
+            <div id="image-preview"></div>
+
+            <button id="upload-photo-btn">
+                Add Photo
+            </button>
+            <div class="photo-field">
+                <label for="photo-name">Photo name</label>
+                <input
+                    type="text"
+                    id="photo-name"
+                    placeholder="Give your photo a name"
+                    required
+                >
+            </div>
+
+            <div class="photo-field">
+                <label for="photo-source">Photo source</label>
+                <input
+                    type="text"
+                    id="photo-source"
+                    placeholder="e.g. Samsung S24 FE, DSLR, Internet"
+                    required
+                >
+
+            </div>
+        </div>
+
+    </div>
+
+
+<!-- Custom App Dialog -->
+<div id="app-dialog" class="app-dialog hidden">
+    <section
+        class="app-dialog-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-message"
+    >
+        <div class="dialog-icon" id="dialog-icon">✦</div>
+
+        <h2 id="dialog-title">Confirm action</h2>
+
+        <p id="dialog-message"></p>
+
+        <textarea
+            id="dialog-input"
+            class="dialog-input hidden"
+            rows="4"
+            placeholder="Write something..."
+        ></textarea>
+
+        <div class="dialog-actions">
+            <button
+                type="button"
+                id="dialog-cancel"
+                class="dialog-btn dialog-cancel"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="dialog-confirm"
+                class="dialog-btn dialog-confirm"
+            >
+                Confirm
+            </button>
+        </div>
+    </section>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="scripts/PhotoSpace.js"></script>
+
+</body>
+</html>
+

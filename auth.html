@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0c0c0d">
+    <title>Join PhotoSpace</title>
+    <link rel="icon" type="image/png" href="pictures/camera-logo-edited.png">
+    <link rel="stylesheet" href="css/main-css.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+    <header class="navbar">
+        <a href="index.html" class="logo"><img src="pictures/full-logo.png" alt="PhotoSpace"></a>
+        <nav class="nav-links" aria-label="Main navigation"><a href="index.html">Explore</a></nav>
+        <div class="nav-actions"><a class="auth-nav-link" href="auth.html">Sign in / Join</a></div>
+    </header>
+    <main class="auth-wrap">
+        <section class="auth-card">
+            <p class="explore-kicker">YOUR PHOTOGRAPHY, YOUR SPACE</p>
+            <h1 id="auth-title">Welcome back</h1>
+            <p class="auth-intro" id="auth-intro">Sign in to share photos and manage your profile.</p>
+            <div class="auth-tabs" role="tablist" aria-label="Account options">
+                <button type="button" class="auth-tab active" id="show-signin" role="tab" aria-selected="true">Sign in</button>
+                <button type="button" class="auth-tab" id="show-signup" role="tab" aria-selected="false">Create account</button>
+            </div>
+            <form id="signin-form" class="auth-form">
+                <label for="signin-email">Email</label>
+                <input id="signin-email" type="email" autocomplete="email" required>
+                <label for="signin-password">Password</label>
+                <input id="signin-password" type="password" autocomplete="current-password" required minlength="8">
+                <button class="auth-submit" type="submit">Sign in</button>
+            </form>
+            <form id="signup-form" class="auth-form hidden" novalidate>
+                <label for="signup-username">Username</label>
+                <input id="signup-username" type="text" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" required>
+                <small>3–24 letters, numbers, or underscores</small>
+                <label for="signup-name">Display name</label>
+                <input id="signup-name" type="text" autocomplete="name" maxlength="60" required>
+                <label for="signup-email">Email</label>
+                <input id="signup-email" type="email" autocomplete="email" required>
+                <label for="signup-password">Password</label>
+                <input id="signup-password" type="password" autocomplete="new-password" minlength="8" required>
+                <button class="auth-submit" type="submit">Create account</button>
+            </form>
+            <p id="auth-message" class="auth-message" role="status"></p>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="scripts/authPage.js"></script>
+</body>
+</html>

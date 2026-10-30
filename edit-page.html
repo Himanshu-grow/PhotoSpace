@@ -1,253 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Edit Profile | PhotoSpace</title>
-<link rel="icon" type="image/png" href="pictures/camera-logo-edited.png">
-
+    <link rel="icon" type="image/png" href="pictures/camera-logo-edited.png">
     <link rel="stylesheet" href="css/edit-page.css">
-
-    <!-- Optional: Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link rel="stylesheet" href="css/auth.css">
 </head>
-
 <body>
-
     <main class="edit-page">
-
-        <!-- Header -->
         <header class="edit-header">
-            <a href="index.html" class="back-btn">
-                <span class="back-arrow">←</span>
-                Back
-            </a>
-
+            <a href="index.html" class="back-btn"><span class="back-arrow">←</span> Explore</a>
             <h1>Edit Profile</h1>
-
-            <button class="save-btn">
-                Save Changes
-            </button>
+            <button class="save-btn" type="submit" form="profile-form">Save Changes</button>
         </header>
-
-
-        <!-- Main Content -->
         <section class="edit-container">
-
-            <!-- Profile Picture Section -->
-            <div class="profile-picture-section">
-
-                <div class="profile-image-wrapper">
-                    <img
-                        src="pictures/default-profile.svg"
-                        alt="Profile picture"
-                        class="profile-image"
-                    >
-                </div>
-                <input type="file" id="edit-profile-image-input" accept="image/*" hidden>
-
-                <div class="profile-picture-info">
-                    <h2>Profile Picture</h2>
-                    <p>Choose a picture that represents you.</p>
-
-                    <div class="picture-actions">
-                        <button class="change-picture-btn">
-                            Change Picture
-                        </button>
-
-                        <button class="remove-picture-btn">
-                            Remove
-                        </button>
+            <form id="profile-form">
+                <section class="profile-picture-section">
+                    <div class="profile-image-wrapper"><img src="pictures/default-profile.svg" alt="Profile picture" class="profile-image"></div>
+                    <input type="file" id="edit-profile-image-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                    <div class="profile-picture-info">
+                        <h2>Profile Picture</h2>
+                        <p>Choose a picture that represents you. Maximum 2 MB.</p>
+                        <div class="picture-actions">
+                            <button class="change-picture-btn" type="button">Change Picture</button>
+                            <button class="remove-picture-btn" type="button">Remove</button>
+                        </div>
                     </div>
-                </div>
-
-            </div>
-
-
-            <!-- Profile Information -->
-            <div class="form-section">
-
-                <div class="section-heading">
-                    <h2>Personal Information</h2>
-                    <p>Update the information displayed on your profile.</p>
-                </div>
-
-
-                <div class="form-grid">
-
-                    <!-- Username -->
-                    <div class="form-group">
-                        <label for="username">Username</label>
-
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter your username"
-                        >
+                </section>
+                <section class="form-section">
+                    <div class="section-heading"><h2>Public profile</h2><p>Other PhotoSpace members can view this information.</p></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="username">Username</label><input id="username" type="text" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" required><small>3–24 letters, numbers, or underscores</small></div>
+                        <div class="form-group"><label for="name">Display name</label><input id="name" type="text" maxlength="60" required></div>
                     </div>
-
-
-                    <!-- Name -->
-                    <div class="form-group">
-                        <label for="name">Name</label>
-
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Enter your name"
-                        >
-                    </div>
-
-
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="email">Email</label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                        >
-                    </div>
-
-
-                    <!-- Website -->
-                    <div class="form-group">
-                        <label for="website">Website</label>
-
-                        <input
-                            type="url"
-                            id="website"
-                            name="website"
-                            placeholder="https://yourwebsite.com"
-                        >
-                    </div>
-
-                </div>
-
-
-                <!-- Bio -->
-                <div class="form-group bio-group">
-                    <label for="bio">Bio</label>
-
-                    <textarea
-                        id="bio"
-                        name="bio"
-                        rows="5"
-                        maxlength="150"
-                        placeholder="Tell people a little about yourself..."
-                    ></textarea>
-
-                    <span class="character-count">33 / 150</span>
-                </div>
-
-            </div>
-
-
-            <!-- Additional Information -->
-            <div class="form-section">
-
-                <div class="section-heading">
-                    <h2>Additional Information</h2>
-                    <p>Let people know a little more about you.</p>
-                </div>
-
-
-                <div class="form-grid">
-
-                    <!-- Location -->
-                    <div class="form-group">
-                        <label for="location">Location</label>
-
-                        <input
-                            type="text"
-                            id="location"
-                            name="location"
-                            placeholder="Where are you from?"
-                        >
-                    </div>
-
-
-                    <!-- Profession -->
-                    <div class="form-group">
-                        <label for="profession">Profession</label>
-
-                        <input
-                            type="text"
-                            id="profession"
-                            name="profession"
-                            placeholder="What do you do?"
-                        >
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Privacy -->
-            <div class="form-section privacy-section">
-
-                <div class="section-heading">
-                    <h2>Privacy</h2>
-                    <p>Control who can see your profile.</p>
-                </div>
-
-                <div class="privacy-option">
-
-                    <div>
-                        <h3>Private Account</h3>
-
-                        <p>
-                            Only people you approve can see your photos
-                            and profile.
-                        </p>
-                    </div>
-
-                    <label class="toggle">
-                        <input type="checkbox" id="private-account">
-
-                        <span class="slider"></span>
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            <!-- Danger Zone -->
-            <div class="danger-section">
-
-                <div>
-                    <h2>Delete Account</h2>
-
-                    <p>
-                        Permanently delete your PhotoSpace account
-                        and all associated data.
-                    </p>
-                </div>
-
-                <button class="delete-btn">
-                    Delete Account
-                </button>
-
-            </div>
-
+                    <div class="form-group bio-group"><label for="bio">Bio</label><textarea id="bio" rows="5" maxlength="150" placeholder="Tell the community a little about yourself"></textarea><span class="character-count">0 / 150</span></div>
+                </section>
+                <p id="profile-save-message" class="auth-message" role="status"></p>
+            </form>
         </section>
-
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="scripts/editProfile.js"></script>
 </body>
 </html>
-

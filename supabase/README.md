@@ -1,14 +1,29 @@
-# Connect the shared PhotoSpace gallery
+# Supabase setup for PhotoSpace accounts
 
-This learning setup uses a public gallery: visitors can read and add photos and notes without signing in. Images are public. The database policies do not allow visitors to edit or delete shared content.
+This version adds email/password accounts, public member profiles, and personal photo galleries. Anyone can browse profiles and photos. Only signed-in users can upload or manage their own photos. Photo images remain publicly viewable.
 
-1. Create a Supabase project.
-2. Open **SQL Editor**, paste in `supabase/schema.sql`, and run it.
-3. In **Project Settings → API**, copy the Project URL and publishable key into `scripts/config.js`.
-4. Open the site through a local web server or GitHub Pages. The browser Supabase client is loaded from jsDelivr.
+## Apply the database update
 
-Use only the project URL and publishable key in the browser. Never put a `service_role` key in this repository or frontend code.
+1. Open the existing Supabase project and go to **SQL Editor → New query**.
+2. Paste the complete contents of `supabase/schema.sql` and click **Run**. It updates the old shared-gallery policies, adds profile ownership, and creates profiles for new sign-ups.
+3. Old community uploads have no account owner. They remain in the database but won’t appear as a member's photos on profile pages.
 
-Anyone can upload up to 10 MB per image and add public notes. Public, unauthenticated uploads can be spammed, and content cannot be attributed to a person or moderated from the app yet. This setup is for learning; add authentication, abuse controls, and moderation before opening a public production gallery.
+## Configure email sign-in
 
-The app no longer reads the previous IndexedDB photo store. Existing browser-stored photos are left on that browser but are not imported into the shared gallery.
+1. In Supabase, open **Authentication → URL Configuration**.
+2. Set **Site URL** to the deployed site root, for example `https://your-name.github.io/PhotoSpace/`.
+3. Add that site root and the local development address you use to **Redirect URLs**. The signup confirmation link redirects to the site's `index.html`.
+4. Open **Authentication → Providers → Email** and keep Email enabled. Email confirmation can stay enabled; users confirm their address before signing in.
+
+The Supabase free email sender is rate-limited. If confirmation emails do not arrive or signup limits are reached, check **Authentication → Logs** and the Supabase email configuration.
+
+## Deploy
+
+Keep the project URL and publishable key in `scripts/config.js`, commit the code, and push it to GitHub. The publishable key is intended for browser use. Never put a Supabase secret or `service_role` key in the site.
+
+## Current account behavior
+
+- Each account has a unique username, display name, bio, and public profile picture.
+- Visitors can explore and view profiles without signing in.
+- A signed-in member can upload photos, add notes, edit their profile, and delete their own photos.
+- Photo content is public. Account deletion and password recovery are not implemented in the site yet.
