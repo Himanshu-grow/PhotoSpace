@@ -1,0 +1,9 @@
+# Installed dependencies; restore them locally with `npm install`.
+node_modules/
+
+# Local Supabase CLI state, including linked project metadata.
+supabase/.temp/
+
+# Local editor and OS files.
+.DS_Store
+.vscode/
