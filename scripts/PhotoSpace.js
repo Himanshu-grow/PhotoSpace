@@ -54,7 +54,7 @@ async function initProfile() {
     $("#edit-name-btn").hidden = !isOwner;
     $("#change-profile-btn").hidden = !isOwner;
     $("#add-photo-btn").hidden = !isOwner;
-    $("#profile-image-input").hidden = !isOwner;
+    $("#profile-image-input").hidden = true;
 
     $("#edit-profile-btn").addEventListener("click", () => { location.href = "edit-page.html"; });
     $("#change-profile-btn").addEventListener("click", () => $("#profile-image-input").click());
