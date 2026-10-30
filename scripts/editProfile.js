@@ -72,12 +72,21 @@ form.addEventListener("submit", async event => {
 document.querySelector("#delete-account-btn").addEventListener("click", async () => {
     if (!window.confirm("Permanently delete your account, profile, photos, comments, and likes? This cannot be undone.")) return;
     const button = document.querySelector("#delete-account-btn");
+    const deleteMessage = document.querySelector("#delete-account-message");
     button.disabled = true;
+    deleteMessage.textContent = "Deleting your account…";
     try {
         await deleteMyAccount();
         location.href = "index.html";
     } catch (error) {
-        message.textContent = error.message || "Account deletion failed. Please try again.";
+        let reason = error.message || "Please try again.";
+        if (error.context instanceof Response) {
+            try {
+                const response = await error.context.json();
+                if (response.error) reason = response.error;
+            } catch { /* Use the function client's message when no JSON error is returned. */ }
+        }
+        deleteMessage.textContent = `Account deletion failed: ${reason}`;
         button.disabled = false;
     }
 });

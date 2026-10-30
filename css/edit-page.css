@@ -515,6 +515,8 @@ body {
     line-height: 1.5;
 }
 
+.danger-section .auth-message { margin: 4px 0 0; color: #e4a5a5; }
+
 
 /* Delete button */
 
