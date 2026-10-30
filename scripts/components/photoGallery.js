@@ -8,6 +8,11 @@ let galleryObjectURLs = [];
 export function renderPhotos() {
     photoGrid.innerHTML = "";
 
+    const postCount = document.querySelector("#post-count");
+    if (postCount) {
+        postCount.textContent = photos.length;
+    }
+
     // Release temporary image URLs from the previous render.
     galleryObjectURLs.forEach((url) => {
         URL.revokeObjectURL(url);
@@ -40,9 +45,4 @@ export function renderPhotos() {
 
         photoGrid.appendChild(image);
     });
-    const postCount = document.querySelector("#post-count");
-
-    if (postCount) {
-        postCount.textContent = photos.length;
-    }
 }
