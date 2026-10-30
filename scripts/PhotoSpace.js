@@ -1,10 +1,11 @@
 
 import { photos } from "./data/photos.js";
-import { getAllPhotos, savePhoto, deletePhoto } from "./utilities/photoDB.js";
+import { getAllPhotos, getPhotoNotes, savePhotoNote } from "./utilities/photoDB.js";
 import { initPhotoUpload } from "./utilities/photoUpload.js";
 import { showAppDialog } from "./components/appDialog.js";
 import { renderPhotos } from "./components/photoGallery.js";
 import { getProfile } from "./profile.js";
+import { isSupabaseConfigured } from "./supabaseClient.js";
 
 const photoGrid = document.querySelector("#photo-grid");
 
@@ -122,7 +123,7 @@ const appDialog = document.querySelector("#app-dialog");
 
 
 // Open a photo
-function openPhoto(photo) {
+async function openPhoto(photo) {
     currentPhoto = photo;
 
     viewerName.textContent = photo.name;
@@ -144,10 +145,15 @@ function openPhoto(photo) {
 
     viewerImage.alt = photo.name;
 
-    // Display this photo's existing notes
-    renderPhotoNotes();
-
     viewer.classList.remove("hidden");
+    notesList.innerHTML = "<p class=\"no-notes\">Loading notes…</p>";
+    try {
+        currentPhoto.notes = await getPhotoNotes(photo.id);
+        if (currentPhoto === photo) renderPhotoNotes();
+    } catch (error) {
+        console.error("Could not load photo notes:", error);
+        notesList.innerHTML = "<p class=\"no-notes\">Notes could not be loaded.</p>";
+    }
 }
 
 
@@ -179,126 +185,10 @@ function renderPhotoNotes() {
             note.createdAt
         ).toLocaleString();
 
-        const actions = document.createElement("div");
-        actions.className = "note-actions";
-
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.textContent = "Edit";
-        editButton.dataset.action = "edit";
-        editButton.dataset.noteId = note.id;
-
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
-        deleteButton.dataset.action = "delete";
-        deleteButton.dataset.noteId = note.id;
-
-        actions.append(editButton, deleteButton);
-        noteElement.append(text, date, actions);
+        noteElement.append(text, date);
         notesList.appendChild(noteElement);
     });
 }
-
-
-notesList.addEventListener("click", async event => {
-    const button = event.target.closest("button[data-action]");
-
-    if (!button || !currentPhoto) return;
-
-    const action = button.dataset.action;
-    const noteId = button.dataset.noteId;
-
-    const notes = currentPhoto.notes || [];
-
-    const index = notes.findIndex(
-        note => String(note.id) === noteId
-    );
-
-    if (index === -1) return;
-
-    const note = notes[index];
-
-    // EDIT NOTE
-    if (action === "edit") {
-
-    const updatedText = await showAppDialog({
-        title: "Edit note",
-        message: "Make changes to your thoughts about this photo.",
-        mode: "prompt",
-        value: note.text,
-        confirmText: "Save changes"
-    });
-
-
-        // Cancelled or unchanged
-        if (updatedText === null) return;
-
-        const trimmedText = updatedText.trim();
-
-        if (!trimmedText) {
-
-        await showAppDialog({
-            title: "Empty note",
-            message: "Please enter some text before saving.",
-            mode: "alert"
-        });
-        
-            return;
-        }
-
-        const previousText = note.text;
-        note.text = trimmedText;
-
-        try {
-            await savePhoto(currentPhoto);
-            renderPhotoNotes();
-        } catch (error) {
-            note.text = previousText;
-
-            console.error("Could not edit note:", error);
-            await showAppDialog({
-                title: "Couldn't save note",
-                message: "Something went wrong while saving your note. Please try again.",
-                mode: "alert",
-                confirmText: "Understood"
-            });
-        }
-    }
-
-    // DELETE NOTE
-    if (action === "delete") {
-
-    const confirmed = await showAppDialog({
-        title: "Delete note?",
-        message: "This note will be permanently removed.",
-        mode: "confirm",
-        danger: true,
-        confirmText: "Delete note"
-    });
-
-
-        if (!confirmed) return;
-
-        const removedNote = notes.splice(index, 1)[0];
-
-        try {
-            await savePhoto(currentPhoto);
-            renderPhotoNotes();
-        } catch (error) {
-            notes.splice(index, 0, removedNote);
-
-            console.error("Could not delete note:", error);
-            await showAppDialog({
-                title: "Couldn't delete note",
-                message: "Your note could not be deleted. Please try again.",
-                mode: "alert"
-            });
-        }
-    }
-});
-
-
 
 // Detect clicks on dynamically generated photos
 photoGrid.addEventListener("click", event => {
@@ -331,24 +221,12 @@ noteForm.addEventListener("submit", async event => {
         currentPhoto.notes = [];
     }
 
-    const note = {
-        id: Date.now(),
-        text: text,
-        createdAt: new Date().toISOString()
-    };
-
-    currentPhoto.notes.push(note);
-
     try {
-        // Save the updated photo record to IndexedDB.
-        await savePhoto(currentPhoto);
-
+        const note = await savePhotoNote(currentPhoto.id, text);
+        currentPhoto.notes.push(note);
         noteInput.value = "";
         renderPhotoNotes();
     } catch (error) {
-        // Roll back the in-memory change if saving fails.
-        currentPhoto.notes.pop();
-
         console.error("Could not save note:", error);
         await showAppDialog({
             title: "Couldn't save note",
@@ -402,68 +280,26 @@ document.addEventListener("keydown", event => {
     }
 });
 
-const deletePhotoButton = document.querySelector("#delete-photo-btn");
-
-deletePhotoButton.addEventListener("click", async () => {
-    if (!currentPhoto) return;
-
-    const photoToDelete = currentPhoto;
-
-
-const confirmed = await showAppDialog({
-    title: "Remove this photo?",
-    message:
-        `Are you sure you want to remove "${photoToDelete.name}"?\n\n` +
-        "The photo and its notes will be permanently deleted from this browser.",
-    mode: "confirm",
-    danger: true,
-    confirmText: "Remove photo"
-});
-
-
-    if (!confirmed) return;
-
-    try {
-        // First delete the saved database record.
-        await deletePhoto(photoToDelete.id);
-
-        // Then remove it from the in-memory array.
-        const index = photos.findIndex(
-            photo => String(photo.id) === String(photoToDelete.id)
-        );
-
-        if (index !== -1) {
-            photos.splice(index, 1);
-        }
-
-        // Refresh the gallery and close the viewer.
-        renderPhotos();
-        closePhotoViewer();
-
-    } catch (error) {
-        console.error("Could not delete photo:", error);
-
-        await showAppDialog({
-            title: "Couldn't remove photo",
-            message: "The photo could not be removed. Please try again.",
-            mode: "alert"
-        });
-    }
-});
-
-
-
 async function initializePhotoSpace() {
+    if (!isSupabaseConfigured) {
+        photoGrid.innerHTML = '<p class="empty-message">Connect Supabase to load the shared gallery. See supabase/README.md.</p>';
+        return;
+    }
+    let loadError = null;
     try {
         const savedPhotos = await getAllPhotos();
 
         photos.splice(0, photos.length, ...savedPhotos);
     } catch (error) {
         console.error("Could not load photos:", error);
+        loadError = error;
     }
 
-    // Render only after the initial database load finishes.
-    renderPhotos();
+    if (loadError) {
+        photoGrid.textContent = "The shared gallery could not be loaded. Check the Supabase setup and try refreshing.";
+    } else {
+        renderPhotos();
+    }
 
     // Enable uploading after loading is complete.
     initPhotoUpload(renderPhotos);

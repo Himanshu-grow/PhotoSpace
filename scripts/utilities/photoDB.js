@@ -1,127 +1,80 @@
+import { supabase, isSupabaseConfigured } from "../supabaseClient.js";
 
-const DB_NAME = "PhotoSpaceDB";
-const STORE_NAME = "photos";
-const DB_VERSION = 2;
+function requireSupabase() {
+    if (!isSupabaseConfigured) {
+        throw new Error("Supabase is not configured. Add your project URL and publishable key in scripts/config.js.");
+    }
+    return supabase;
+}
 
-export function openPhotoDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        request.onupgradeneeded = () => {
-            const db = request.result;
-
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: "id" });
-            }
-            if (!db.objectStoreNames.contains("profiles")) {
-                db.createObjectStore("profiles", { keyPath: "id" });
-            }
-        };
-
-        request.onsuccess = () => {
-            const db = request.result;
-
-            // Close the connection if another part of the app
-            // requests a database upgrade.
-            db.onversionchange = () => db.close();
-
-            resolve(db);
-        };
-
-        request.onerror = () => {
-            reject(request.error);
-        };
-    });
+function mapPhoto(row) {
+    const { data } = supabase.storage.from("photos").getPublicUrl(row.image_path);
+    return {
+        id: row.id,
+        name: row.name,
+        source: row.source || "",
+        date: row.created_at ? new Date(row.created_at).toISOString().slice(0, 10) : "",
+        createdAt: row.created_at,
+        imagePath: row.image_path,
+        url: data.publicUrl,
+        notes: []
+    };
 }
 
 export async function getAllPhotos() {
-    const db = await openPhotoDB();
-
-    return new Promise((resolve, reject) => {
-        let result;
-
-        const transaction = db.transaction(
-            STORE_NAME,
-            "readonly"
-        );
-
-        const request = transaction
-            .objectStore(STORE_NAME)
-            .getAll();
-
-        request.onsuccess = () => {
-            result = request.result;
-        };
-
-        transaction.oncomplete = () => {
-            db.close();
-            resolve(result);
-        };
-
-        transaction.onerror = () => {
-            db.close();
-            reject(transaction.error || request.error);
-        };
-
-        transaction.onabort = () => {
-            db.close();
-            reject(transaction.error || request.error);
-        };
-    });
+    const client = requireSupabase();
+    const { data, error } = await client
+        .from("photos")
+        .select("id, name, source, image_path, created_at")
+        .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data || []).map(mapPhoto);
 }
 
 export async function savePhoto(photo) {
-    const db = await openPhotoDB();
+    const client = requireSupabase();
+    if (!(photo.image instanceof Blob)) {
+        throw new Error("Select an image file before uploading.");
+    }
 
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction(
-            STORE_NAME,
-            "readwrite"
-        );
+    const extension = (photo.image.name?.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const imagePath = `${crypto.randomUUID()}.${extension || "jpg"}`;
+    const { error: uploadError } = await client.storage
+        .from("photos")
+        .upload(imagePath, photo.image, {
+            contentType: photo.image.type || "image/jpeg",
+            cacheControl: "3600",
+            upsert: false
+        });
+    if (uploadError) throw uploadError;
 
-        transaction.objectStore(STORE_NAME).put(photo);
-
-        transaction.oncomplete = () => {
-            db.close();
-            resolve();
-        };
-
-        transaction.onerror = () => {
-            db.close();
-            reject(transaction.error);
-        };
-
-        transaction.onabort = () => {
-            db.close();
-            reject(transaction.error);
-        };
-    });
+    const { data, error } = await client
+        .from("photos")
+        .insert({ name: photo.name.trim(), source: photo.source.trim(), image_path: imagePath })
+        .select("id, name, source, image_path, created_at")
+        .single();
+    if (error) throw error;
+    return mapPhoto(data);
 }
 
-export async function deletePhoto(id) {
-    const db = await openPhotoDB();
+export async function getPhotoNotes(photoId) {
+    const client = requireSupabase();
+    const { data, error } = await client
+        .from("photo_notes")
+        .select("id, text, created_at")
+        .eq("photo_id", photoId)
+        .order("created_at", { ascending: true });
+    if (error) throw error;
+    return (data || []).map(note => ({ ...note, createdAt: note.created_at }));
+}
 
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction(
-            STORE_NAME,
-            "readwrite"
-        );
-
-        transaction.objectStore(STORE_NAME).delete(id);
-
-        transaction.oncomplete = () => {
-            db.close();
-            resolve();
-        };
-
-        transaction.onerror = () => {
-            db.close();
-            reject(transaction.error);
-        };
-
-        transaction.onabort = () => {
-            db.close();
-            reject(transaction.error);
-        };
-    });
+export async function savePhotoNote(photoId, text) {
+    const client = requireSupabase();
+    const { data, error } = await client
+        .from("photo_notes")
+        .insert({ photo_id: photoId, text: text.trim() })
+        .select("id, text, created_at")
+        .single();
+    if (error) throw error;
+    return { ...data, createdAt: data.created_at };
 }

@@ -48,7 +48,7 @@ export function initPhotoUpload(onPhotoAdded) {
 
         if (!file) return;
 
-        if (!file.type.startsWith("image/")) {
+        if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
             selectedFile = null;
             photoInput.value = "";
 
@@ -65,6 +65,13 @@ export function initPhotoUpload(onPhotoAdded) {
                 mode: "alert"
             });
 
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            selectedFile = null;
+            photoInput.value = "";
+            await showAppDialog({ title: "Image too large", message: "Choose an image no larger than 10 MB.", mode: "alert" });
             return;
         }
 
@@ -101,7 +108,7 @@ export function initPhotoUpload(onPhotoAdded) {
         }
     });
 
-    // Add selected photo to IndexedDB
+    // Upload the image and its metadata to the shared Supabase gallery.
     uploadButton.addEventListener("click", async () => {
         if (uploadButton.disabled) return;
         if (!selectedFile) {
@@ -126,9 +133,7 @@ export function initPhotoUpload(onPhotoAdded) {
         }
 
         const photo = {
-            id: Date.now(),
             name: name,
-            date: new Date().toISOString().slice(0, 10),
             source: source,
             image: selectedFile
         };
@@ -136,9 +141,8 @@ export function initPhotoUpload(onPhotoAdded) {
         uploadButton.disabled = true;
 
         try {
-            await savePhoto(photo);
-
-            photos.push(photo);
+            const savedPhoto = await savePhoto(photo);
+            photos.unshift(savedPhoto);
             onPhotoAdded();
             closeModal();
 
@@ -148,7 +152,7 @@ export function initPhotoUpload(onPhotoAdded) {
 
             await showAppDialog({
                 title: "Upload failed",
-                message: "Could not save the photo. Please try again.",
+                message: error.message || "Could not save the photo. Please try again.",
                 mode: "alert"
             });
         } finally {

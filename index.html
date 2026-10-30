@@ -161,8 +161,8 @@
                 </div>
 
 
-                <button id="delete-photo-btn" class="delete-photo-btn">
-                    Remove Photo
+                <button id="delete-photo-btn" class="delete-photo-btn" type="button" disabled title="Shared photos cannot be removed without accounts">
+                    Removal unavailable
                 </button>
 
 
@@ -283,6 +283,7 @@
 </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="scripts/PhotoSpace.js"></script>
 
 </body>

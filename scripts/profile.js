@@ -1,6 +1,4 @@
-import { openPhotoDB } from "./utilities/photoDB.js";
-
-const PROFILE_ID = "default-profile";
+const PROFILE_KEY = "photospace-profile";
 
 export const defaultProfile = {
     username: "", name: "", email: "", website: "", bio: "",
@@ -8,29 +6,14 @@ export const defaultProfile = {
     profileImage: "pictures/default-profile.svg"
 };
 
-// IndexedDB persists profile edits across browser restarts without localStorage.
+// Profile settings remain local to this browser; gallery photos and notes use Supabase.
 export async function getProfile() {
-    const db = await openPhotoDB();
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("profiles", "readonly");
-        const request = transaction.objectStore("profiles").get(PROFILE_ID);
-        let savedProfile;
-        request.onsuccess = () => { savedProfile = request.result?.data; };
-        transaction.oncomplete = () => { db.close(); resolve({ ...defaultProfile, ...(savedProfile || {}) }); };
-        transaction.onerror = () => { db.close(); reject(transaction.error || request.error); };
-        transaction.onabort = () => { db.close(); reject(transaction.error || request.error); };
-    });
+    try { return { ...defaultProfile, ...JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}") }; }
+    catch { return { ...defaultProfile }; }
 }
 
 export async function saveProfile(profile) {
-    const db = await openPhotoDB();
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("profiles", "readwrite");
-        transaction.objectStore("profiles").put({ id: PROFILE_ID, data: profile });
-        transaction.oncomplete = () => { db.close(); resolve(); };
-        transaction.onerror = () => { db.close(); reject(transaction.error); };
-        transaction.onabort = () => { db.close(); reject(transaction.error); };
-    });
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 }
 
 export function readImageAsDataURL(file) {
