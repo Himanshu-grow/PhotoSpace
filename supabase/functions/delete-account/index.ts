@@ -12,9 +12,11 @@ Deno.serve(async (request) => {
 
   const authorization = request.headers.get("Authorization");
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const secretKey = Deno.env.get("SUPABASE_SECRET_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const publishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || Deno.env.get("SUPABASE_ANON_KEY");
-  if (!authorization || !supabaseUrl || !secretKey || !publishableKey) {
+  // Supabase reserves the SUPABASE_ prefix for platform variables, so store
+  // the legacy service_role key under this custom secret name.
+  const serviceRoleKey = Deno.env.get("SERVICE_ROLE_KEY");
+  const publishableKey = request.headers.get("apikey");
+  if (!authorization || !supabaseUrl || !serviceRoleKey || !publishableKey) {
     return Response.json({ error: "Function is not configured." }, { status: 500, headers: corsHeaders });
   }
 
@@ -23,7 +25,7 @@ Deno.serve(async (request) => {
   const { data: { user }, error: authError } = await publicClient.auth.getUser(token);
   if (authError || !user) return Response.json({ error: "Sign in to delete your account." }, { status: 401, headers: corsHeaders });
 
-  const admin = createClient(supabaseUrl, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const paths: string[] = [];
   for (let offset = 0; ; offset += 1000) {
     const { data, error } = await admin.storage.from("photos").list(user.id, { limit: 1000, offset });

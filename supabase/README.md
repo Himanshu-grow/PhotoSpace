@@ -19,16 +19,17 @@ Keep email confirmation enabled. Before inviting the public, configure a custom 
 
 ## 3. Deploy account deletion function
 
-Account deletion needs an Edge Function because only server-side code can securely remove a Supabase Auth user. From the repository root, install/login/link the Supabase CLI, then set the function secret and deploy:
+Account deletion needs an Edge Function because only server-side code can securely remove a Supabase Auth user. The CLI is included in this repository's development dependencies. From the repository root, run:
 
 ```sh
-supabase login
-supabase link --project-ref YOUR_PROJECT_REF
-supabase secrets set SUPABASE_SECRET_KEY=YOUR_SECRET_KEY
-supabase functions deploy delete-account
+npm install
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase secrets set SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
+npx supabase functions deploy delete-account --use-api
 ```
 
-Use a Supabase secret key (or legacy service-role key) only as the Edge Function secret. Never put it in `scripts/config.js` or frontend code. The function deletes the account’s stored images before asking Auth to delete the user and cascading database rows.
+Get the project ref from your Supabase project URL or its project settings. For `SERVICE_ROLE_KEY`, use the project's legacy `service_role` secret key from **Project Settings → API Keys**; Auth's admin delete operation requires a service-role key. Supabase reserves names starting with `SUPABASE_`, which is why the custom name above is used. Never put this key in `scripts/config.js` or frontend code. The function deletes the account’s stored images before asking Auth to delete the user and cascading database rows.
 
 ## 4. Assign moderators
 
